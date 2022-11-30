@@ -1,6 +1,6 @@
 # Flash_Chat
 
-<h1 align="center">Flash Chat<\h1>
+<h1 align="center">Flash Chat
 It's a simple instant messaging app with interactive UI using firebase authentication and cloud firestore as database
 
 Welcome Screen:
