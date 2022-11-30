@@ -3,6 +3,7 @@ import 'package:flash/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 final _firestore=FirebaseFirestore.instance;
  late User loggedInUser;
 class ChatScreen extends StatefulWidget {
@@ -79,6 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       _firestore.collection('messages').add({
                         'msg':msgText,
                         'sender':loggedInUser.email,
+                        'time':FieldValue.serverTimestamp()
                       });
                     },
                     child: Text(
@@ -102,7 +104,7 @@ class MessagesStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('messages').snapshots(),
+      stream: _firestore.collection('messages').orderBy('time').snapshots(),
       builder: (context,snapshot){
         if(snapshot.hasData)
         {
@@ -110,6 +112,7 @@ class MessagesStream extends StatelessWidget {
           List<MessageBubble> msgWidgets=[];
           for(var message in messages)
           {
+            final timestamp=message.get('time');
             final msgText=message.get('msg');
             final msgSender=message.get('sender');
             final currentUser=loggedInUser.email;
@@ -140,6 +143,7 @@ class MessageBubble extends StatelessWidget {
   MessageBubble({this.sender,this.text, this.isMe:false});
   final sender,text;
  final bool isMe;
+// final time;
   @override
   Widget build(BuildContext context) {
     return Padding(
